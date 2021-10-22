@@ -1,5 +1,7 @@
 # express
 
+## 基本使用
+
 ### 基本配置以及get传值
 
 ```js
@@ -7,7 +9,8 @@ const express = require('express')
 const app=express()
 
 app.get("/",(req,res)=>{
-    res.send("你好 express")
+    // 结合状态码发送出去
+    res.status(200).send("你好 express")
 })
 
 app.get("/login",(req,res)=>{
@@ -536,3 +539,344 @@ npx express-generator
  cnpm install -g express-generator
 
 express --view=ejs express09
+
+## 建立数据模型
+
+### 基本流程
+
+```js
+const mongoose = require('mongoose');
+//2、建立连接  
+mongoose.connect('mongodb://127.0.0.1:27017/eggcms');
+//3、操作users表（集合）   定义一个Schema   Schema里面的对象和数据库表里面的字段需要一一对应
+var UserSchema=mongoose.Schema({
+    name:String,
+    age:Number,
+    status:Number
+})
+
+//4、定义数据库模型  操作数据库
+// model里面的第一个参数 要注意：1首字母大写  2、要和数据库表（集合 ）名称对应  这个模型会和模型名称相同的复数的数据库表建立连接
+
+// var User=mongoose.model('User',UserSchema);    // 默认会操作 users表（集合）
+
+var User=mongoose.model('User',UserSchema,'user');  //默认会操作第三个参数配置的表  user表（集合）
+
+//5、查询users表的数据
+User.find({},function(err,doc){ 
+    if(err){
+        console.log(err);
+        return;
+    }
+    console.log(doc);
+})
+
+
+//6、增加数据
+    // 6.1实例化 Model     通过实例化User Molde 创建增加的数据
+    // 6.2 实例.save()
+var u=new User({
+    name:'李四',
+    age:20,
+    status:1
+});
+
+u.save(function(err){
+    if(err){
+        console.log(err);
+        return;
+    }
+    console.log('成功')
+});  //执行增加操作
+     
+
+// 7. 删除数据
+User.deleteOne({"_id":"5b7563e2ba3c6747d0612204"}, (err,result)=>{
+    if(err){
+        return console.log(err);
+    }
+    console.log(result)
+})
+
+// 6、修改数据
+User.updateOne(
+    {"_id":"5b7563e2ba3c6747d0612204"},   
+    {"age":"16"},
+    function(err,doc){
+        if(err){
+            return console.log(err);
+        }
+        console.log(doc)
+    }
+)
+```
+
+### mongoose模块化
+
+app.js
+
+```js
+var UserModel=require('./model/user.js');
+var NewsModel=require('./model/news.js');
+
+var user=new UserModel({
+    name:"李四666",
+    age:40
+})
+
+user.save(function(err){
+    if(err){
+        console.log(err);
+        return;
+    }
+    //获取user表的数据
+    UserModel.find({},function(err,docs){
+        if(err){    
+            console.log(err);
+            return;
+        }
+        console.log(docs);
+    })
+})
+```
+
+model/user.js
+
+```js
+var mongoose=require('./db.js');  // 
+var UserSchema=mongoose.Schema({
+    name:String,
+    age:Number,
+    status:{
+        type:Number,
+        default:1   
+    }
+})
+module.exports=mongoose.model('User',UserSchema,'user');
+```
+
+model/db.js
+
+```js
+//连接数据库
+var mongoose=require('mongoose');
+//useNewUrlParser这个属性会在url里识别验证用户所需的db
+mongoose.connect('mongodb://127.0.0.1:27017/eggcms',{ useNewUrlParser: true },function(err){
+        if(err){
+            console.log(err);
+            return;
+        }
+        console.log('数据库连接成功')
+});
+module.exports=mongoose;
+```
+
+### 修饰符，限制字段,set,get
+
+```js
+var mongoose=require('./db.js');
+var FocusSchema=mongoose.Schema({
+    title:{
+        type:String,
+        trim:true    //定义 mongoose模式修饰符 去掉空格
+    },   
+    pic:String,    
+    redirect:{
+        type:String,
+        set(parmas){   //增加数据的时候对redirect字段进行处理
+            // parmas可以获取redirect的值 、    返回的数据就是redirect在数据库实际保存的值
+            /*
+             www.baidu.com              http://www.baidu.com
+             http://www.baidu.com       http://www.baidu.com
+            */
+            if(!parmas){
+                return ''
+            }else{
+               if(parmas.indexOf('http://')!=0 && parmas.indexOf('https://')!=0){
+                    return 'http://'+parmas;
+               }
+                return parmas
+            }
+        }
+    },
+    status:{
+        type:Number,
+        default:1
+    }
+})
+module.exports=mongoose.model('Focus',FocusSchema,'focus');
+```
+
+![image-20211022104343632](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022104343632.png)
+
+
+
+### mongoose数据校验
+
+```js
+var mongoose=require('./db.js');
+
+//mongoose数据校验:用户通过mongoose给mongodb数据库增加数据的时候，对数据的合法性进行的验证
+
+//mongoose里面定义Schema:字段类型，修饰符、默认参数 、数据校验都是为了数据库数据的一致性
+
+//Schema，为数据库对象的集合,每个schema会映射到mongodb中的一个collection,定义Schema可以理解为表结构的定义
+
+var UserSchema=mongoose.Schema({
+    name:{
+        type:String,//指定类型
+        trim:true,   //修饰符         
+        required:true      
+    },
+    sn:{
+        type:String,
+        index:true,  //索引.
+        set(val){  //自定义修饰符
+            return val;
+        },
+        // maxlength:20,
+        // minlength:10
+        // match:/^sn(.*)/ ,
+        validate: function(sn) {
+            return sn.length >= 10;
+        }     
+    },   
+    age:{
+        type:Number,
+        min:0,    //用在number类型上面
+        max:150
+    },       
+    status:{
+        type:String, 
+        default:'success', //默认值
+        enum:['success','error']   //status的值必须在 对应的数组里面  注意枚举是用在String
+    }
+})
+
+module.exports=mongoose.model('User',UserSchema,'user');
+```
+
+注意结构
+
+![image-20211022104749147](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022104749147.png)
+
+### 关联查询
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 补充
+
+#### 各个中间件req里面定义的值可以共享
+
+![image-20211022085705856](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022085705856.png)
+
+#### 定义中间件函数,app.use就成了中间件
+
+```js
+function json(options){
+	return (req, res, next) => {
+        console.log(`hello $options.message`)
+    }
+}
+
+app.use(json({
+    message: 'world!'
+}))
+```
+
+#### 设置访问前缀
+
+```js
+app.use("/V1", router)
+```
+
+#### next细讲
+
+**如果将任何内容传递给next()函数(字符串'router'除外),express都会将当前请求视为错误，并且将跳过所有剩余的无错误处理路由和中间件函数**
+
+next()       往后匹配下一个中间件
+
+next('route')   往后匹配当前中间件堆栈中的下一个
+
+next(任意数据)   跳过所有剩余的无错误处理和中间件函数
+
+#### 错误处理
+
+```js
+// 在所有中间件之后挂载错误处理中间件
+// 500错误
+app.use((err, req, res, next) => {
+    console.log('错误', err)
+    res.status(500).json({
+        error: err.message
+    })
+})
+
+// 从上到下依次匹配
+// 404错误
+app.use(req, res, next) => {
+    res.status(404).send('404 not found.')
+}
+
+app.listen(3000, ()=>{
+    console.log("运行")
+})
+```
+
+#### 内置中间件
+
+express.json:     解析Content-Type为application/json格式的请求体
+
+express.urlencoded():     解析Content-Type 为application/x-www-form-urlencoded格式的请求体
+
+express.raw()     解析Content-Type为application/octet-stream格式的请求体
+
+express.text()     解析Content-Type为text/plain格式的请求体
+
+express.static()      托管静态资源文件
+
+#### app.all()
+
+无论post,get,put,delete，只要为/secret都会进行处理
+
+```js
+app.all('/secret', function(req, res, next) {
+	console.log("aaa")
+    next()
+})
+```
+
+#### 目录结构规范
+
+![image-20211022092200595](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022092200595.png)
+
+#### 模块抽离
+
+##### 路由模块抽离
+
+![image-20211022092820070](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022092820070.png)
+
+![image-20211022092910789](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022092910789.png)
+
+##### 逻辑模块抽离
+
+![image-20211022092941052](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022092941052.png)
+
+![image-20211022093020060](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022093020060.png)
+
+![image-20211022093052052](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022093052052.png)
+

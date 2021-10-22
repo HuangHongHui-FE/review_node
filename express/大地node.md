@@ -45,8 +45,6 @@ cnpm -g install supervisor
 
 supervisor app.js
 
-### 
-
 ### commonJS和nodejs模块
 
 common.js
