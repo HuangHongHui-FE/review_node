@@ -10,7 +10,6 @@ app.use(views('views',{
 }))
 
 router.get('/',async (ctx)=>{
-
     await  ctx.render('index');
 })
 
@@ -24,14 +23,6 @@ router.post('/doAdd',async (ctx)=>{
     ctx.body=data;
 })
 
-
-
 app.use(router.routes());   /*启动路由*/
 app.use(router.allowedMethods());
 app.listen(3000);
-
-
-
-
-
-

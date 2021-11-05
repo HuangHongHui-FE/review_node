@@ -1,7 +1,3 @@
-/**
- * Created by Administrator on 2018/3/13 0013.
- */
-
 
 exports.getPostData=function(ctx){
     //获取数据  异步
@@ -13,7 +9,6 @@ exports.getPostData=function(ctx){
                })
 
                ctx.req.on('end',function(chunk){
-
                    resolve(str)
                })
 
