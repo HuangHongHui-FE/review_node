@@ -2,7 +2,6 @@ var mongoose=require('./db.js');
 
 
 var OrderSchema=mongoose.Schema({
-
     order_id:String,
     uid:Number,
     trade_no:String,

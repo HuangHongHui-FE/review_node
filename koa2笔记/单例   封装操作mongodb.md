@@ -1,7 +1,3 @@
-
-
-单例   封装操作mongodb
-
 ### es5中的类和静态方法
 
 ```js
@@ -315,7 +311,7 @@ class Db{
                 this.connect().then((db)=>{
                     //db.user.update({},{$set:{}})
                     db.collection(collectionName).updateOne(json1,{
-                        $set:json2
+                        $set: json2
                     },(err,result)=>{
                         if(err){
                             reject(err);

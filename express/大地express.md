@@ -128,15 +128,12 @@ app.listen(3000)
 ```js
 /*
 1.在 app.js 的头上定义 ejs:,代码如下: 
-
 	var ejs = require('ejs'); 
 
 2.注册 html 模板引擎代码如下： 
-
 	app.engine('html',ejs.__express);
 
 3.将模板引擎换成 html 代码如下:
-
 	app.set('view engine', 'html'); 
 
 4.修改模板文件的后缀为.html。
@@ -283,11 +280,6 @@ app.get("/",(req,res)=>{
     // res.cookie("username","张三",{maxAge:1000*60*60})
 
 
-    /*
-    
-
-    */
-
     res.cookie("username","zhangsan",{maxAge:1000*60*60,signed:true})
 
 
@@ -310,11 +302,9 @@ app.get("/user",(req,res)=>{
 })
 
 app.get("/product",(req,res)=>{
-    
     //获取加密的cookie
     let username=req.signedCookies.username  
-    
-   res.send("product--"+username)
+    res.send("product--"+username)
 })
 
 app.listen(80)
@@ -557,10 +547,9 @@ var UserSchema=mongoose.Schema({
 
 //4、定义数据库模型  操作数据库
 // model里面的第一个参数 要注意：1首字母大写  2、要和数据库表（集合 ）名称对应  这个模型会和模型名称相同的复数的数据库表建立连接
-
 // var User=mongoose.model('User',UserSchema);    // 默认会操作 users表（集合）
 
-var User=mongoose.model('User',UserSchema,'user');  //默认会操作第三个参数配置的表  user表（集合）
+var User = mongoose.model('User', UserSchema, 'user');  // 默认会操作第三个参数配置的表  user表（集合）
 
 //5、查询users表的数据
 User.find({},function(err,doc){ 
@@ -571,11 +560,10 @@ User.find({},function(err,doc){
     console.log(doc);
 })
 
-
 //6、增加数据
     // 6.1实例化 Model     通过实例化User Molde 创建增加的数据
     // 6.2 实例.save()
-var u=new User({
+var u = new User({
     name:'李四',
     age:20,
     status:1
@@ -588,7 +576,6 @@ u.save(function(err){
     }
     console.log('成功')
 });  //执行增加操作
-     
 
 // 7. 删除数据
 User.deleteOne({"_id":"5b7563e2ba3c6747d0612204"}, (err,result)=>{
@@ -616,10 +603,10 @@ User.updateOne(
 app.js
 
 ```js
-var UserModel=require('./model/user.js');
-var NewsModel=require('./model/news.js');
+var UserModel = require('./model/user.js');
+var NewsModel = require('./model/news.js');
 
-var user=new UserModel({
+var user = new UserModel({
     name:"李四666",
     age:40
 })
@@ -652,6 +639,7 @@ var UserSchema=mongoose.Schema({
         default:1   
     }
 })
+
 module.exports=mongoose.model('User',UserSchema,'user');
 ```
 
@@ -674,7 +662,7 @@ module.exports=mongoose;
 ### 修饰符，限制字段,set,get
 
 ```js
-var mongoose=require('./db.js');
+var mongoose = require('./db.js');
 var FocusSchema=mongoose.Schema({
     title:{
         type:String,
@@ -704,7 +692,7 @@ var FocusSchema=mongoose.Schema({
         default:1
     }
 })
-module.exports=mongoose.model('Focus',FocusSchema,'focus');
+module.exports = mongoose.model('Focus',FocusSchema,'focus');
 ```
 
 ![image-20211022104343632](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022104343632.png)
@@ -717,9 +705,7 @@ module.exports=mongoose.model('Focus',FocusSchema,'focus');
 var mongoose=require('./db.js');
 
 //mongoose数据校验:用户通过mongoose给mongodb数据库增加数据的时候，对数据的合法性进行的验证
-
 //mongoose里面定义Schema:字段类型，修饰符、默认参数 、数据校验都是为了数据库数据的一致性
-
 //Schema，为数据库对象的集合,每个schema会映射到mongodb中的一个collection,定义Schema可以理解为表结构的定义
 
 var UserSchema=mongoose.Schema({
@@ -770,15 +756,17 @@ module.exports=mongoose.model('User',UserSchema,'user');
 
 
 
+## Express 应用生成器
+
+cnpm install -g express-generat
+
+express --view=ejs express0
 
 
 
 
 
-
-
-
-## 补充
+# 补充
 
 #### 各个中间件req里面定义的值可以共享
 
@@ -872,6 +860,8 @@ app.all('/secret', function(req, res, next) {
 
 ![image-20211022092910789](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022092910789.png)
 
+
+
 ##### 逻辑模块抽离
 
 ![image-20211022092941052](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022092941052.png)
@@ -880,3 +870,14 @@ app.all('/secret', function(req, res, next) {
 
 ![image-20211022093052052](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211022093052052.png)
 
+
+
+
+
+## 传统web应用案例
+
+错误处理中间件
+
+![image-20211106174950371](C:\Users\HDR\AppData\Roaming\Typora\typora-user-images\image-20211106174950371.png)
+
+看文档使用
