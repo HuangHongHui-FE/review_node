@@ -4,5 +4,38 @@
 
 
 
+![image-20211130121517936](03node%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.assets/image-20211130121517936.png)
 
 
+
+
+
+跨域
+
+![image-20211130122022858](03node%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.assets/image-20211130122022858.png)
+
+
+
+声明一下
+
+愿意给到3000端口
+
+![image-20211130122221940](03node%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.assets/image-20211130122221940.png)
+
+
+
+
+
+后端的代理服务器
+
+![image-20211130123124297](03node%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.assets/image-20211130123124297.png)
+
+
+
+![image-20211130125143621](03node%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.assets/image-20211130125143621.png)
+
+
+
+socket.io
+
+![image-20211130124424125](03node%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B.assets/image-20211130124424125.png)
