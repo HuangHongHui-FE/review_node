@@ -25,7 +25,7 @@ function set(key, value) {
 }
 
 
-// 命令行接口
+// 命令行接口,读cmd里面的命令
 // set a 1
 // get a
 
@@ -46,7 +46,7 @@ rl.on('line', function(input) {
     if(op == "get") {
         get(key)
     }else if(op === "set"){
-        set(key.value)
+        set(key, value)
     }else if(op === "quit"){
         rl.close()
     }else {

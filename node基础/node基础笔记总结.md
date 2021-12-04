@@ -73,7 +73,6 @@ server.on('request', function (request, response) {
 server.listen(8888, function () {
     console.log("服务器启动成功了， 可以通过http://127.0.0.1:8888/来进行访问")
 })
-
 ```
 
 ### http-url
@@ -754,30 +753,23 @@ connection.end();
 var fs = require("fs")
 // Promise是一个构造函数
 
-// console.log(1)
 // 创建一个Promise容器(promise本身不是异步，但容器中往往封装异步任务)
-// promise一旦创建就开始执行里面的代码
 var p1 = new Promise(function(resolve, reject){
-	// console.log(2)
 	fs.readFile('./data/a.txt', 'utf8', function(err, data){
 		if(err){
-			// console.log(err)
 			// 把容器中Pending状态改为Rejected
 			reject(err)
 		}else{
-			// console.log(3)
-			// console.log(data)
 			// 把容器中pending状态改为resolved
 			resolve(data)
 		}
 	})
 })
-// console.log(4)
+
 var p2 = new Promise(function(resolve, reject){
 	// console.log(2)
 	fs.readFile('./data/b.txt', 'utf8', function(err, data){
 		if(err){
-			// console.log(err)
 			// 把容器中Pending状态改为Rejected
 			reject(err)
 		}else{
@@ -790,12 +782,9 @@ var p2 = new Promise(function(resolve, reject){
 })
 
 
-
-// p1就是哪个承诺
-// p1成功后然后then做指定的操作
 // then方法接受的function就是容器中的resolve函数
 p1
-	.then( function (data) {  // 这个data就是resolve里的data
+	.then( function (data) {
 		console.log(data)
 		// return "hello"
 		// 真正有用的是return 一个promise对象
@@ -803,9 +792,9 @@ p1
 	}, function (err) {  // 这个data就是reject里的err
 		console.log('读取文件失败了', err)
 	})
-	.then( function (data) {  // 此data为上个函数return 的结果
+	.then( function (data) {
 		console.log(data)
-	}, function (err) {  // 这个data就是reject里的err
+	}, function (err) {
 		console.log('读取文件失败了', err)
 	})
 ```
@@ -849,22 +838,11 @@ pReadFile('./data/a.txt')
 ```
 服务端渲染：
 	说白了就是在服务端使用模板引擎
-	模板引擎最早诞生于服务端，后来发展到了前端
 服务端渲染和客户端渲染的差别
 	客户端渲染不利于SEO搜索引擎优化
 	服务端是可以被爬虫抓取到的，客户端异步渲染更难被抓取
 	所以真正的网站既不是纯异步也不是纯服务端渲染出来的，而是两者结合来做的
 	例如京东的商品列表就采用的服务端渲染，目的是为了SEO搜索引擎优化
 	而他的商品评论列表为了用户体验，而且也不需要SEO优化，所以采用客户端渲染
-```
-
-##### 建项目流程
-
-```
-建项目流程：
-	1. 新建一个文件夹crud-express(在主目录下), cmd中cd到这个文件夹
-	2. cmd中npm init -y  后会自动在crud-express中生成一个package.json
-	3. 再在这个文件夹安装依赖npm install --save express。后就会自动生成一个node_modules文件夹。
-
 ```
 
